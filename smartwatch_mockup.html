@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Smartwatch Multi-Page Mockup</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .watch {
+    width: 320px;
+    height: 320px;
+    background: #222;
+    border-radius: 40px;
+    box-shadow: 0 0 20px #0af;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .page {
+    flex: 1;
+    display: none;
+    overflow-y: auto;
+  }
+  .page.active {
+    display: block;
+  }
+  .time {
+    font-size: 48px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .status-bar {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+  }
+  .status-item {
+    text-align: center;
+    font-size: 14px;
+  }
+  .status-item .icon {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .voice-record {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+  .record-btn {
+    background: #0af;
+    border: none;
+    border-radius: 25px;
+    padding: 15px 30px;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 10px #08c;
+    transition: background 0.3s;
+  }
+  .record-btn:hover {
+    background: #08c;
+  }
+  .nav-bar {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+  }
+  .nav-item {
+    flex: 1;
+    text-align: center;
+    color: #888;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+    padding: 5px 0;
+  }
+  .nav-item.active {
+    color: #0af;
+    font-weight: 700;
+  }
+  .nav-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  /* Modi-Seite */
+  .modes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .modes-list li {
+    background: #333;
+    margin: 8px 0;
+    padding: 15px 20px;
+    border-radius: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modes-list li span.icon {
+    font-size: 26px;
+    margin-right: 12px;
+  }
+  /* Emotionen-Seite */
+  .emotions-grid {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+  }
+  .emotion-btn {
+    font-size: 40px;
+    cursor: pointer;
+    user-select: none;
+    padding: 10px;
+    border-radius: 15px;
+    background: #333;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .emotion-btn:hover, .emotion-btn:focus {
+    background: #0af;
+    outline: none;
+    transform: scale(1.1);
+  }
+  .emotion-btn.selected {
+    background: #08c;
+  }
+  /* Notfall-Seite */
+  .emergency-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  .emergency-btn {
+    background: #e00;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    box-shadow: 0 0 15px #f33;
+    font-size: 36px;
+    line-height: 80px;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    user-select: none;
+    margin-bottom: 15px;
+    transition: background 0.3s;
+  }
+  .emergency-btn:hover {
+    background: #c00;
+  }
+  .emergency-text {
+    font-size: 16px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="watch" role="main" aria-label="Smartwatch Benutzeroberfläche">
+
+    <!-- Dashboard Seite -->
+    <section id="page-dashboard" class="page active" aria-label="Dashboard">
+      <div class="time" aria-live="polite" id="time">12:45</div>
+      <div class="status-bar" aria-label="Vitalwerte Status">
+        <div class="status-item" title="Herzschlag">
+          <span class="icon">❤️</span>
+          <span>72 bpm</span>
+        </div>
+        <div class="status-item" title="Blutdruck">
+          <span class="icon">🩸</span>
+          <span>120/80</span>
+        </div>
+        <div class="status-item" title="Temperatur">
+          <span class="icon">🌡️</span>
+          <span>36.5 °C</span>
+        </div>
+        <div class="status-item" title="Schlaf">
+          <span class="icon">🌙</span>
+          <span>7h 30m</span>
+        </div>
+      </div>
+      <div class="voice-record">
+        <button class="record-btn" aria-label="Aufnahme starten">
+          🎤 Stimme aufzeichnen
+        </button>
+      </div>
+    </section>
+
+    <!-- Modi Seite -->
+    <section id="page-modes" class="page" aria-label="Modi">
+      <h2 style="text-align:center; margin-bottom:15px;">Modi</h2>
+      <ul class="modes-list" role="list">
+        <li role="listitem" tabindex="0"><span class="icon">🏃‍♂️</span> Sport</li>
+        <li role="listitem" tabindex="0"><span class="icon">🌙</span> Schlaf</li>
+        <li role="listitem" tabindex="0"><span class="icon">⚙️</span> Benutzerdefiniert</li>
+      </ul>
+    </section>
+
+    <!-- Emotionen Seite -->
+    <section id="page-emotions" class="page" aria-label="Emotionen">
+      <h2 style="text-align:center; margin-bottom:10px;">Wie fühlst du dich?</h2>
+      <div class="emotions-grid" role="list" aria-label="Emotionen auswählen">
+        <button class="emotion-btn" role="listitem" aria-pressed="false" tabindex="0" title="Fröhlich">😊</button>
+        <button class="emotion-btn" role="listitem" aria-pressed="false" tabindex="0" title="Neutral">😐</button>
+        <button class="emotion-btn" role="listitem" aria-pressed="false" tabindex="0" title="Traurig">😢</button>
+        <button class="emotion-btn" role="listitem" aria-pressed="false" tabindex="0" title="Gestresst">😰</button>
+        <button class="emotion-btn" role="listitem" aria-pressed="false" tabindex="0" title="Entspannt">😌</button>
+      </div>
+    </section>
+
+    <!-- Notfall Seite -->
+    <section id="page-emergency" class="page" aria-label="Notfall">
+      <div class="emergency-container">
+        <div class="emergency-btn" role="button" tabindex="0" aria-label="Notfallknopf, drücken für Soforthilfe" id="emergencyBtn">🚨</div>
+        <div class="emergency-text">Drücken für Soforthilfe und Verständigung mit Notkontakt</div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="nav-bar" role="navigation" aria-label="Hauptmenü">
+      <div class="nav-item active" data-target="page-dashboard" tabindex="0" aria-current="page" title="Dashboard">
+        <span class="nav-icon">⌚</span>
+        Start
+      </div>
+      <div class="nav-item" data-target="page-modes" tabindex="0" title="Modi">
+        <span class="nav-icon">🏃‍♂️</span>
+        Modi
+      </div>
+      <div class="nav-item" data-target="page-emotions" tabindex="0" title="Emotionen">
+        <span class="nav-icon">😊</span>
+        Stimmung
+      </div>
+      <div class="nav-item" data-target="page-emergency" tabindex="0" title="Notfall">
+        <span class="nav-icon">🚨</span>
+        Notfall
+      </div>
+    </nav>
+  </div>
+
+<script>
+  // Navigation zwischen Seiten
+  const navItems = document.querySelectorAll('.nav-item');
+  const pages = document.querySelectorAll('.page');
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const target = item.getAttribute('data-target');
+      switchPage(target);
+    });
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const target = item.getAttribute('data-target');
+        switchPage(target);
+      }
+    });
+  });
+
+  function switchPage(id) {
+    pages.forEach(p => p.classList.remove('active'));
+    navItems.forEach(n => {
+      n.classList.remove('active');
+      n.removeAttribute('aria-current');
+    });
+    document.getElementById(id).classList.add('active');
+    const navItem = [...navItems].find(n => n.getAttribute('data-target') === id);
+    navItem.classList.add('active');
+    navItem.setAttribute('aria-current', 'page');
+  }
+
+  // Uhrzeit Anzeige aktualisieren
+  function updateTime() {
+    const timeEl = document.getElementById('time');
+    const now = new Date();
+    const h = now.getHours().toString().padStart(2, '0');
+    const m = now.getMinutes().toString().padStart(2, '0');
+    timeEl.textContent = `${h}:${m}`;
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+
+  // Emotion Buttons Auswahl
+  const emotionButtons = document.querySelectorAll('.emotion-btn');
+  emotionButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      emotionButtons.forEach(b => {
+        b.classList.remove('selected');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('selected');
+      btn.setAttribute('aria-pressed', 'true');
+      alert(`Du hast deine Stimmung als "${btn.title}" ausgewählt.`);
+    });
+  });
+
+  // Notfall Button
+  const emergencyBtn = document.getElementById('emergencyBtn');
+  emergencyBtn.addEventListener('click', () => {
+    alert('Notfallmodus aktiviert! Hilfe wird verständigt.');
+  });
+  emergencyBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      alert('Notfallmodus aktiviert! Hilfe wird verständigt.');
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI4CALM</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ddd;
+    }
+
+    .app-container {
+      max-width: 390px;
+      margin: 0 auto;
+      border: 1px solid #444;
+      background-color: #1c1c1c;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: #4a148c;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: #4a148c;
+      padding: 0.5rem 0;
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      font-size: 0.9rem;
+      color: #d1aaff;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    nav button:hover {
+      color: #fff;
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .section {
+      margin-bottom: 1.5rem;
+    }
+
+    .section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #d1aaff;
+      user-select: none;
+    }
+
+    .card {
+      background-color: #232323;
+      padding: 0.75rem 1rem;
+      border-radius: 14px;
+      margin-bottom: 0.75rem;
+      color: #d1aaff;
+      user-select: text;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    }
+
+    .chart-container {
+      background-color: #232323;
+      border-radius: 14px;
+      padding: 1rem 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.8);
+      user-select: none;
+    }
+
+    .chart-container h3 {
+      color: #d1aaff;
+      margin: 0 0 0.75rem 0;
+      font-weight: 600;
+      font-size: 1.15rem;
+      user-select: text;
+    }
+
+    canvas {
+      width: 340px !important;
+      height: 220px !important;
+      background-color: #1c1c1c;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      margin-bottom: 0;
+      user-select: none;
+    }
+
+    footer {
+      background-color: #2c2c2c;
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #999;
+      user-select: none;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-group button {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-coffee { background: #6a1b9a; }
+    .btn-coffee:hover { background: #7e33b3; }
+    .btn-water  { background: #009688; }
+    .btn-water:hover { background: #00aa99; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header>AI4CALM</header>
+
+    <nav>
+      <button>Dashboard</button>
+      <button>Eingabe</button>
+      <button>Profil</button>
+    </nav>
+
+    <div class="content">
+
+      <div class="section">
+        <h2>🔍 Tagesübersicht</h2>
+        <div class="card">Stimmung: 😐 Neutral<br><small>08.07.2025 - 10:15</small></div>
+        <div class="card">🚶 Schritte: 7.820</div>
+        <div class="card" id="consumptionCard">
+          ☕ Kaffee: <span id="coffeeCount">2</span><br>
+          🚬 Nikotin: 3<br>
+          💧 Wasser: <span id="waterCount">1.5</span>L
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-coffee" onclick="addCoffee()">☕ + Kaffee</button>
+          <button class="btn-water" onclick="addWater()">💧 + Wasser</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📈 Statistiken & Muster</h2>
+
+        <div class="chart-container">
+          <h3>Stimmung (1–5)</h3>
+          <canvas id="moodChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <h3>Herzfrequenz Ø (bpm)</h3>
+          <canvas id="heartChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <h3>Schlafdauer (h)</h3>
+          <canvas id="sleepChart"></canvas>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>🚶 Schritte im Verlauf</h2>
+        <div class="chart-container">
+          <h3>Schritte pro Tag</h3>
+          <canvas id="stepsChart"></canvas>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📝 Manuelle Eingabe</h2>
+        <div class="card">Notiz vom Therapeuten:<br>"Patient zeigt stabile Stimmung, Empfehlung: Sport beibehalten."</div>
+      </div>
+
+      <div class="section">
+        <h2>🏃 Lifestyle & Smartwatch</h2>
+        <div class="card">Smartwatch verbunden ✅</div>
+        <div class="card">Aktivität: 45 Min Gehen<br>Herzfrequenz Ø: 74 bpm</div>
+      </div>
+
+      <div class="section">
+        <h2>📋 Medizinische Vorgeschichte</h2>
+        <div class="card">
+          Diagnose: Angststörung (2022)<br>
+          Medikation: Sertralin 50mg<br>
+          Allergien: Keine bekannt
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>🚨 Notfallkontakte</h2>
+        <div class="card">👩‍⚕️ Dr. Petra Lang – 030 123456</div>
+        <div class="card">👩‍👧 Mutter – 0176 98765432</div>
+        <div class="card">🧠 Therapeut: Daniel Weber – 0151 34567890</div>
+      </div>
+
+    </div>
+
+    <footer>© 2025 AI4CALM – Dein Begleiter für mentale Balance</footer>
+  </div>
+
+  <script>
+    const labels = ['02.07', '03.07', '04.07', '05.07', '06.07', '07.07', '08.07'];
+
+    // Stimmung
+    new Chart(document.getElementById('moodChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Stimmung (1–5)',
+          data: [3, 2, 4, 5, 3, 4, 3],
+          backgroundColor: 'rgba(156, 39, 176, 0.2)',
+          borderColor: 'rgba(156, 39, 176, 1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4
+        }]
+      },
+      options: {
+        scales: {
+          y: { min: 1, max: 5, ticks: { stepSize: 1 } }
+        },
+        plugins: {
+          legend: { display: false }
+        },
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    // Herzfrequenz
+    new Chart(document.getElementById('heartChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Herzfrequenz Ø (bpm)',
+          data: [76, 72, 75, 74, 78, 73, 74],
+          backgroundColor: 'rgba(233, 30, 99, 0.2)',
+          borderColor: 'rgba(233, 30, 99, 1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4
+        }]
+      },
+      options: {
+        scales: {
+          y: { suggestedMin: 60, suggestedMax: 90 }
+        },
+        plugins: {
+          legend: { display: false }
+        },
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    // Schlaf
+    new Chart(document.getElementById('sleepChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Schlafdauer (h)',
+          data: [6.5, 7.2, 5.8, 8.0, 6.9, 7.5, 6.7],
+          backgroundColor: 'rgba(0, 150, 136, 0.2)',
+          borderColor: 'rgba(0, 150, 136, 1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4
+        }]
+      },
+      options: {
+        scales: {
+          y: { min: 0, max: 10 }
+        },
+        plugins: {
+          legend: { display: false }
+        },
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    // Schritte
+    new Chart(document.getElementById('stepsChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Schritte pro Tag',
+          data: [6200, 8100, 7300, 9000, 8500, 7900, 7820],
+          backgroundColor: 'rgba(33, 150, 243, 0.2)',
+          borderColor: 'rgba(33, 150, 243, 1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true }
+        },
+        plugins: {
+          legend: { display: false }
+        },
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    // Kaffee & Wasser Buttons
+    let coffee = 2;
+    let water = 1.5;
+
+    function addCoffee() {
+      coffee++;
+      document.getElementById('coffeeCount').textContent = coffee;
+    }
+
+    function addWater() {
+      water += 0.25;
+      document.getElementById('waterCount').textContent = water.toFixed(2);
+    }
+  </script>
+</body>
+</html>
+
+
